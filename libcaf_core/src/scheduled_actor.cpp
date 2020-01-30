@@ -710,10 +710,10 @@ invoke_message_result scheduled_actor::consume(mailbox_element& x) {
         switch (bhvr(visitor, x.content())) {
           default:
             break;
-          case match_case::skip:
+          case match_result::skip:
             skipped = true;
             break;
-          case match_case::no_match:
+          case match_result::no_match:
             call_default_handler();
         }
         return !skipped ? invoke_message_result::consumed
@@ -1136,10 +1136,10 @@ scheduled_actor::handle_open_stream_msg(mailbox_element& x) {
     return fallback();
   auto res = (bs.back())(f, osm.msg);
   switch (res) {
-    case match_case::result::no_match:
+    case match_result::no_match:
       CAF_LOG_DEBUG("no match in behavior, fall back to default handler");
       return fallback();
-    case match_case::result::match: {
+    case match_result::match: {
       return invoke_message_result::consumed;
     }
     default:

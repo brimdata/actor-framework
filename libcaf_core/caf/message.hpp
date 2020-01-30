@@ -36,7 +36,6 @@
 #include "caf/none.hpp"
 #include "caf/optional.hpp"
 #include "caf/skip.hpp"
-#include "caf/type_nr.hpp"
 
 namespace caf {
 class message_handler;
@@ -76,7 +75,9 @@ public:
 
   size_t size() const noexcept override;
 
-  rtti_pair type(size_t pos) const noexcept override;
+  type_id_list types() const noexcept override;
+
+  type_id_t type(size_t pos) const noexcept override;
 
   const void* get(size_t pos) const noexcept override;
 

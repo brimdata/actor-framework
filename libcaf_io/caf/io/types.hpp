@@ -5,7 +5,7 @@
  *                     | |___ / ___ \|  _|      Framework                     *
  *                      \____/_/   \_|_|                                      *
  *                                                                            *
- * Copyright 2011-2019 Dominik Charousset                                     *
+ * Copyright 2011-2020 Dominik Charousset                                     *
  *                                                                            *
  * Distributed under the terms and conditions of the BSD 3-Clause License or  *
  * (at your option) under the terms and conditions of the Boost Software      *
@@ -16,17 +16,23 @@
  * http://www.boost.org/LICENSE_1_0.txt.                                      *
  ******************************************************************************/
 
-#include "caf/rtti_pair.hpp"
+#pragma once
 
-namespace caf {
+#include "caf/io/fwd.hpp"
+#include "caf/type_id.hpp"
 
-std::string to_string(rtti_pair x) {
-  std::string result = "(";
-  result += std::to_string(x.first);
-  result += ", ";
-  result += x.second != nullptr ? x.second->name() : "<null>";
-  result += ")";
-  return result;
-}
+CAF_BEGIN_TYPE_ID_BLOCK(io_module, builtin_type_ids.last)
 
-} // namespace caf
+  CAF_ADD_TYPE_ID(io_module, caf::io::acceptor_closed_msg);
+  CAF_ADD_TYPE_ID(io_module, caf::io::acceptor_passivated_msg);
+  CAF_ADD_TYPE_ID(io_module, caf::io::connection_closed_msg);
+  CAF_ADD_TYPE_ID(io_module, caf::io::connection_passivated_msg);
+  CAF_ADD_TYPE_ID(io_module, caf::io::data_transferred_msg);
+  CAF_ADD_TYPE_ID(io_module, caf::io::datagram_sent_msg);
+  CAF_ADD_TYPE_ID(io_module, caf::io::datagram_servant_closed_msg);
+  CAF_ADD_TYPE_ID(io_module, caf::io::datagram_servant_passivated_msg);
+  CAF_ADD_TYPE_ID(io_module, caf::io::new_connection_msg);
+  CAF_ADD_TYPE_ID(io_module, caf::io::new_data_msg);
+  CAF_ADD_TYPE_ID(io_module, caf::io::new_datagram_msg);
+
+CAF_END_TYPE_ID_BLOCK(io_module)

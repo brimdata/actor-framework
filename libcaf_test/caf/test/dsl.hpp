@@ -684,6 +684,8 @@ public:
   // -- constructors, destructors, and assignment operators --------------------
 
   static Config& init_config(Config& cfg) {
+    detail::clear_global_meta_objects();
+    init_global_meta_objects<builtin_type_ids>();
     cfg.set("logger.file-verbosity", "quiet");
     if (auto err = cfg.parse(caf::test::engine::argc(),
                              caf::test::engine::argv()))

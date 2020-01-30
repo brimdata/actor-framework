@@ -42,6 +42,20 @@ class receive_policy;
 class abstract_broker;
 class datagram_servant;
 
+// -- structs ------------------------------------------------------------------
+
+struct acceptor_closed_msg;
+struct acceptor_passivated_msg;
+struct connection_closed_msg;
+struct connection_passivated_msg;
+struct data_transferred_msg;
+struct datagram_sent_msg;
+struct datagram_servant_closed_msg;
+struct datagram_servant_passivated_msg;
+struct new_connection_msg;
+struct new_data_msg;
+struct new_datagram_msg;
+
 // -- aliases ------------------------------------------------------------------
 
 using scribe_ptr = intrusive_ptr<scribe>;
@@ -59,4 +73,3 @@ class default_multiplexer;
 
 } // namespace io
 } // namespace caf
-

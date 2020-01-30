@@ -25,6 +25,12 @@
 
 #include "caf/actor_registry.hpp"
 
+CAF_BEGIN_TYPE_ID_BLOCK(actor_factory_tests, builtin_type_ids.last)
+
+  CAF_ADD_TYPE_ID(actor_factory_tests, caf::io::new_datagram_msg);
+
+CAF_END_TYPE_ID_BLOCK(actor_factory_tests)
+
 using namespace caf;
 
 using std::endl;
@@ -33,6 +39,12 @@ namespace {
 
 struct fixture {
   actor_system_config cfg;
+
+  fixture() {
+    detail::clear_global_meta_objects();
+    init_global_meta_objects<builtin_type_ids>();
+    init_global_meta_objects<actor_factory_tests_type_ids>();
+  }
 
   void test_spawn(message args, bool expect_fail = false) {
     actor_system system{cfg};

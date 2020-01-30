@@ -27,13 +27,10 @@
 #include "caf/detail/apply_args.hpp"
 #include "caf/detail/core_export.hpp"
 #include "caf/detail/pseudo_tuple.hpp"
-#include "caf/detail/try_match.hpp"
 #include "caf/error_code.hpp"
 #include "caf/fwd.hpp"
 #include "caf/optional.hpp"
-#include "caf/rtti_pair.hpp"
 #include "caf/type_erased_value.hpp"
-#include "caf/type_nr.hpp"
 
 namespace caf {
 
@@ -72,9 +69,11 @@ public:
   /// Returns the size of this tuple.
   virtual size_t size() const noexcept = 0;
 
-  /// Returns the type number and `std::type_info` object for
-  /// the element at position `pos`.
-  virtual rtti_pair type(size_t pos) const noexcept = 0;
+  /// Returns the type IDs for this tuple.
+  virtual type_id_list types() const noexcept = 0;
+
+  /// Returns the type ID for the element at position `pos`.
+  virtual type_id_t type(size_t pos) const noexcept = 0;
 
   /// Returns the element at position `pos`.
   virtual const void* get(size_t pos) const noexcept = 0;
@@ -109,22 +108,10 @@ public:
   /// Saves the content of the tuple to `sink`.
   virtual error_code<sec> save(binary_serializer& sink) const;
 
-  /// Checks whether the type of the stored value at position `pos`
-  /// matches type number `n` and run-time type information `p`.
-  bool matches(size_t pos, uint16_t nr, const std::type_info* ptr) const
-    noexcept;
+  /// @private
+  type_erased_tuple* copy() const;
 
   // -- convenience functions --------------------------------------------------
-
-  /// Returns the type number for the element at position `pos`.
-  inline uint16_t type_nr(size_t pos) const noexcept {
-    return type(pos).first;
-  }
-
-  /// Checks whether the type of the stored value matches `rtti`.
-  inline bool matches(size_t pos, const rtti_pair& rtti) const noexcept {
-    return matches(pos, rtti.first, rtti.second);
-  }
 
   /// Convenience function for `*reinterpret_cast<const T*>(get())`.
   template <class T>
@@ -177,8 +164,7 @@ public:
   template <class T>
   bool match_element(size_t pos) const noexcept {
     CAF_ASSERT(pos < size());
-    auto x = detail::meta_element_factory<T>::create();
-    return matches(pos, x.typenr, x.type);
+    return type(pos) == type_id_v<T>;
   }
 
   /// Returns `true` if the pattern `Ts...` matches the content of this tuple.
@@ -276,7 +262,9 @@ public:
 
   size_t size() const noexcept override;
 
-  rtti_pair type(size_t pos) const noexcept override;
+  type_id_list types() const noexcept override;
+
+  type_id_t type(size_t pos) const noexcept override;
 
   const void* get(size_t pos) const noexcept override;
 
