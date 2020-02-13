@@ -271,7 +271,7 @@ const int no_sigpipe_io_flag = MSG_NOSIGNAL;
    * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.   *
    \**************************************************************************/
   std::pair<native_socket, native_socket> create_pipe() {
-    socket_size_type addrlen = sizeof(sockaddr_in);
+    socklen_t addrlen = sizeof(sockaddr_in);
     native_socket socks[2] = {invalid_native_socket, invalid_native_socket};
     CALL_CRITICAL_CFUN(listener, detail::cc_valid_socket, "socket",
                        socket(AF_INET, SOCK_STREAM, IPPROTO_TCP));
@@ -328,7 +328,7 @@ const int no_sigpipe_io_flag = MSG_NOSIGNAL;
 
 expected<int> send_buffer_size(native_socket fd) {
   int size;
-  socket_size_type ret_size = sizeof(size);
+  socklen_t ret_size = sizeof(size);
   CALL_CFUN(res, detail::cc_zero, "getsockopt",
             getsockopt(fd, SOL_SOCKET, SO_SNDBUF,
             reinterpret_cast<getsockopt_ptr>(&size), &ret_size));
@@ -339,7 +339,7 @@ expected<void> send_buffer_size(native_socket fd, int new_value) {
   CALL_CFUN(res, detail::cc_zero, "setsockopt",
             setsockopt(fd, SOL_SOCKET, SO_SNDBUF,
                        reinterpret_cast<setsockopt_ptr>(&new_value),
-                       static_cast<socket_size_type>(sizeof(int))));
+                       static_cast<socklen_t>(sizeof(int))));
   return unit;
 }
 
@@ -349,7 +349,7 @@ expected<void> tcp_nodelay(native_socket fd, bool new_value) {
   CALL_CFUN(res, detail::cc_zero, "setsockopt",
             setsockopt(fd, IPPROTO_TCP, TCP_NODELAY,
                        reinterpret_cast<setsockopt_ptr>(&flag),
-                       static_cast<socket_size_type>(sizeof(flag))));
+                       static_cast<socklen_t>(sizeof(flag))));
   return unit;
 }
 
@@ -367,7 +367,7 @@ bool is_error(signed_size_type res, bool is_nonblock) {
 
 expected<string> local_addr_of_fd(native_socket fd) {
   sockaddr_storage st;
-  socket_size_type st_len = sizeof(st);
+  socklen_t st_len = sizeof(st);
   sockaddr* sa = reinterpret_cast<sockaddr*>(&st);
   CALL_CFUN(tmp1, detail::cc_zero, "getsockname", getsockname(fd, sa, &st_len));
   char addr[INET6_ADDRSTRLEN] {0};
@@ -388,7 +388,7 @@ expected<string> local_addr_of_fd(native_socket fd) {
 
 expected<uint16_t> local_port_of_fd(native_socket fd) {
   sockaddr_storage st;
-  socket_size_type st_len = sizeof(st);
+  socklen_t st_len = sizeof(st);
   CALL_CFUN(tmp, detail::cc_zero, "getsockname",
             getsockname(fd, reinterpret_cast<sockaddr*>(&st), &st_len));
   return ntohs(port_of(reinterpret_cast<sockaddr&>(st)));
@@ -396,7 +396,7 @@ expected<uint16_t> local_port_of_fd(native_socket fd) {
 
 expected<string> remote_addr_of_fd(native_socket fd) {
   sockaddr_storage st;
-  socket_size_type st_len = sizeof(st);
+  socklen_t st_len = sizeof(st);
   sockaddr* sa = reinterpret_cast<sockaddr*>(&st);
   CALL_CFUN(tmp, detail::cc_zero, "getpeername", getpeername(fd, sa, &st_len));
   char addr[INET6_ADDRSTRLEN] {0};
@@ -417,7 +417,7 @@ expected<string> remote_addr_of_fd(native_socket fd) {
 
 expected<uint16_t> remote_port_of_fd(native_socket fd) {
   sockaddr_storage st;
-  socket_size_type st_len = sizeof(st);
+  socklen_t st_len = sizeof(st);
   CALL_CFUN(tmp, detail::cc_zero, "getpeername",
             getpeername(fd, reinterpret_cast<sockaddr*>(&st), &st_len));
   return ntohs(port_of(reinterpret_cast<sockaddr&>(st)));

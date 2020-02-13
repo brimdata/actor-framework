@@ -69,7 +69,7 @@ bool tcp::try_accept(native_socket& result, native_socket fd) {
   CAF_LOG_TRACE(CAF_ARG(fd));
   sockaddr_storage addr;
   std::memset(&addr, 0, sizeof(addr));
-  socket_size_type addrlen = sizeof(addr);
+  socklen_t addrlen = sizeof(addr);
   result = ::accept(fd, reinterpret_cast<sockaddr*>(&addr), &addrlen);
   // note accept4 is better to avoid races in setting CLOEXEC (but not posix)
   child_process_inherit(result, false);

@@ -40,7 +40,7 @@ bool udp::read_datagram(size_t& result, native_socket fd, void* buf,
                         size_t buf_len, ip_endpoint& ep) {
   CAF_LOG_TRACE(CAF_ARG(fd));
   memset(ep.address(), 0, sizeof(sockaddr_storage));
-  socket_size_type len = sizeof(sockaddr_storage);
+  socklen_t len = sizeof(sockaddr_storage);
   auto sres = ::recvfrom(fd, static_cast<io::network::socket_recv_ptr>(buf),
                          buf_len, 0, ep.address(), &len);
   if (is_error(sres, true)) {
